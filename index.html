@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RING'Y - Wire Converter for Jewelers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-light: #fafaf8;
+            --bg-dark: #0f0f0d;
+            --text-light: #292521;
+            --text-dark: #e5e1dc;
+            --border-light: #e7e5e4;
+            --border-dark: #292625;
+            --gold: #d4af37;
+            --gold-bright: #FFDE59;
+            --gold-hover: #e6c850;
+        }
+
+        html {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            transition: background-color 0.3s, color 0.3s;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 1.25rem 0.75rem;
+            background: rgba(250, 250, 248, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(231, 229, 228, 0.5);
+            gap: 1rem;
+        }
+
+        body.dark-mode header {
+            background: rgba(15, 15, 13, 0.9);
+            border-bottom-color: rgba(41, 38, 37, 0.5);
+        }
+
+        header h1 {
+            font-size: 1.875rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            color: var(--gold);
+            text-align: center;
+            flex: 1;
+        }
+
+        .header-controls {
+            position: absolute;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .icon-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f3f1f0;
+            color: #87837a;
+            font-size: 16px;
+        }
+
+        body.dark-mode .icon-button {
+            background: #27251f;
+            color: #a8a39a;
+        }
+
+        .icon-button:hover {
+            background: #e8e6e1;
+        }
+
+        body.dark-mode .icon-button:hover {
+            background: #3b3935;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0.75rem;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .main-container {
+            margin: auto;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .card {
+            background: #1a1714;
+            border-color: var(--border-dark);
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 0.625rem;
+            border-bottom: 1px solid #f5f3f0;
+        }
+
+        body.dark-mode .card-header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .card-header h2 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--gold);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .card-header-relative {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.625rem;
+            border-bottom: 1px solid #f5f3f0;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+            min-height: 40px;
+        }
+
+        body.dark-mode .card-header-relative {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .card-header-relative h2 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--gold);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            flex-shrink: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .stock-toggle-btn {
+            font-size: 0.75rem;
+            background: #f3f1f0;
+            color: #78746b;
+            padding: 0 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        body.dark-mode .stock-toggle-btn {
+            background: #27251f;
+            color: #a8a39a;
+        }
+
+        .stock-toggle-btn:hover {
+            background: #e8e6e1;
+        }
+
+        body.dark-mode .stock-toggle-btn:hover {
+            background: #3b3935;
+        }
+
+        body.dark-mode .toggle-btn {
+            background: #27251f;
+            color: #a8a39a;
+        }
+
+        .toggle-btn:hover {
+            background: #e8e6e1;
+        }
+
+        body.dark-mode .toggle-btn:hover {
+            background: #3b3935;
+        }
+
+        .toggle-btn {
+            position: relative;
+            font-size: 0.75rem;
+            background: #f3f1f0;
+            color: #78746b;
+            padding: 0;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-top: 0.25rem;
+            flex: 1;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.375rem;
+        }
+
+        label {
+            font-size: 0.625rem;
+            color: #92897f;
+            text-transform: uppercase;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        body.dark-mode label {
+            color: #8b8178;
+        }
+
+        input, select {
+            width: 100%;
+            height: 40px;
+            font-size: 0.875rem;
+            border-radius: 0.75rem;
+            background: #f9f8f6;
+            border: 1px solid var(--border-light);
+            padding: 0 0.75rem;
+            color: var(--text-light);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        body.dark-mode input,
+        body.dark-mode select {
+            background: #0a0a09;
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        input:hover, select:hover {
+            background: #f3f1f0;
+        }
+
+        body.dark-mode input:hover,
+        body.dark-mode select:hover {
+            background: #1a1714;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 0 1px var(--gold-bright);
+        }
+
+        /* Remove number input spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-wrapper span {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: #a8a39a;
+            display: none;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .shape-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem;
+            border-radius: 0.75rem;
+            border: 2px solid var(--border-light);
+            background: #f9f8f6;
+            color: #99938a;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 0.625rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        body.dark-mode .shape-btn {
+            background: #0a0a09;
+            border-color: var(--border-dark);
+            color: #7a6f69;
+        }
+
+        .shape-btn:hover {
+            border-color: var(--gold-bright);
+            background: #f3f1f0;
+            transform: translateY(-2px);
+        }
+
+        body.dark-mode .shape-btn:hover {
+            border-color: var(--gold-bright);
+            background: #1a1714;
+            transform: translateY(-2px);
+        }
+
+        .shape-btn.active {
+            border-color: #000;
+            background: var(--gold-bright);
+            color: #1a1714;
+            font-weight: 900;
+            transform: translateY(-3px);
+        }
+
+        body.dark-mode .shape-btn.active {
+            color: #1a1714;
+            background: var(--gold-bright);
+            border-color: var(--gold-bright);
+        }
+
+        .shape-icon {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 0.3rem;
+        }
+
+        .separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -0.375rem 0;
+            z-index: 10;
+        }
+
+        .separator-circle {
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            padding: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            color: #99938a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        body.dark-mode .separator-circle {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+            color: #7a6f69;
+        }
+
+        .separator-circle svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        #newStockDiv {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 222, 89, 0.05);
+        }
+
+        .calculate-btn {
+            height: 40px;
+            padding: 0 2rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            background: var(--gold-bright);
+            color: black;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .calculate-btn:hover {
+            background: var(--gold-hover);
+        }
+
+        .calculate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 100px;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .results {
+            background: rgba(255, 222, 89, 0.1);
+            border: 1px solid rgba(255, 222, 89, 0.3);
+            border-radius: 24px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: slideUp 0.3s ease-out;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255, 222, 89, 0.3);
+            padding-bottom: 0.75rem;
+        }
+
+        .results-label {
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--gold);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .results-value {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            color: var(--gold);
+        }
+
+        .results-unit {
+            font-size: 1.125rem;
+            font-weight: 600;
+            opacity: 0.7;
+            letter-spacing: 0;
+            margin-left: 0.25rem;
+        }
+
+        .results-secondary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+            padding-top: 0.25rem;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-item:nth-child(2) {
+            border-left: 1px solid rgba(255, 222, 89, 0.3);
+            border-right: 1px solid rgba(255, 222, 89, 0.3);
+        }
+
+        .result-label {
+            font-size: 0.5625rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #92897f;
+            text-transform: uppercase;
+        }
+
+        body.dark-mode .result-label {
+            color: #8b8178;
+        }
+
+        .result-value {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .result-value {
+            color: var(--text-dark);
+        }
+
+        .result-unit {
+            font-size: 0.5625rem;
+            font-weight: 400;
+            color: #a8a39a;
+        }
+
+        .results-error {
+            padding: 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border-radius: 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        body.dark-mode .results-error {
+            color: #fca5a5;
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            border: 1px dashed var(--border-light);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2rem;
+            font-size: 0.75rem;
+            color: #99938a;
+            font-weight: 500;
+        }
+
+        body.dark-mode .placeholder {
+            background: rgba(26, 23, 20, 0.5);
+            border-color: var(--border-dark);
+            color: #7a6f69;
+        }
+
+        footer {
+            padding: 0.75rem 1.25rem;
+            text-align: center;
+            border-top: 1px solid rgba(231, 229, 228, 0.5);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            font-size: 0.625rem;
+            color: #99938a;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        body.dark-mode footer {
+            background: rgba(15, 15, 13, 0.3);
+            border-top-color: rgba(41, 38, 37, 0.5);
+            color: #7a6f69;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 1rem;
+            max-width: 90%;
+            max-height: 80vh;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        body.dark-mode .modal {
+            background: #1a1714;
+            border-color: var(--border-dark);
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark-mode .modal-header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .modal-header h3 {
+            color: var(--text-dark);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            background: #f3f1f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #87837a;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .modal-close {
+            background: #27251f;
+            color: #a8a39a;
+        }
+
+        .modal-close:hover {
+            background: #e8e6e1;
+        }
+
+        body.dark-mode .modal-close:hover {
+            background: #3b3935;
+        }
+
+        .modal-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .test-item {
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e7e5e4;
+        }
+
+        body.dark-mode .test-item {
+            border-color: var(--border-dark);
+        }
+
+        .test-item.passed {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .test-item.failed {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .test-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark-mode .test-header {
+            color: var(--text-dark);
+        }
+
+        .test-item.passed .test-header {
+            color: #10b981;
+        }
+
+        .test-item.failed .test-header {
+            color: #ef4444;
+        }
+
+        .test-icon {
+            width: 16px;
+            height: 16px;
+            font-weight: 900;
+        }
+
+        .test-errors {
+            font-size: 0.625rem;
+            color: #dc2626;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(239, 68, 68, 0.2);
+            display: none;
+        }
+
+        .test-errors.expanded {
+            display: block;
+        }
+
+        body.dark-mode .test-errors {
+            color: #fca5a5;
+        }
+
+        .test-errors ul {
+            list-style: disc;
+            margin-left: 1rem;
+        }
+
+        .test-errors li {
+            margin-top: 0.25rem;
+        }
+
+        .test-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+        }
+
+        .test-toggle.expanded::before {
+            content: '▼ ';
+        }
+
+        .test-toggle:not(.expanded)::before {
+            content: '▶ ';
+        }
+
+        .test-summary {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #92897f;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .test-summary {
+            color: #8b8178;
+            border-bottom-color: var(--border-dark);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>RING'Y</h1>
+        <div class="header-controls">
+            <button class="icon-button" id="testBtn" title="Run Tests">▶</button>
+            <button class="icon-button" id="darkToggle" title="Toggle Dark Mode">🌙</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="main-container">
+            <!-- Ring Specs Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Ring Specs 💍</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Material ✨</label>
+                        <select id="material">
+                            <option>14K Gold</option>
+                            <option>18K Gold</option>
+                            <option>24K Gold</option>
+                            <option>Sterling Silver</option>
+                            <option>Brass</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Size 📏</label>
+                        <select id="ringInputMethod" style="flex: 1;">
+                            <option value="US Ring Size">US Size</option>
+                            <option value="Free Length">Length</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="usRingSizeDiv">
+                    <div class="form-group">
+                        <label>US Ring Size</label>
+                        <select id="usRingSize">
+                            <option value="3">US 3</option>
+                            <option value="3.5">US 3.5</option>
+                            <option value="4">US 4</option>
+                            <option value="4.5">US 4.5</option>
+                            <option value="5">US 5</option>
+                            <option value="5.5">US 5.5</option>
+                            <option value="6">US 6</option>
+                            <option value="6.5">US 6.5</option>
+                            <option value="7" selected>US 7</option>
+                            <option value="7.5">US 7.5</option>
+                            <option value="8">US 8</option>
+                            <option value="8.5">US 8.5</option>
+                            <option value="9">US 9</option>
+                            <option value="9.5">US 9.5</option>
+                            <option value="10">US 10</option>
+                            <option value="10.5">US 10.5</option>
+                            <option value="11">US 11</option>
+                            <option value="12">US 12</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="freeLengthDiv" style="display: none;">
+                    <div class="form-group">
+                        <label>Free Length (mm)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="freeLength" value="">
+                            <span>mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 0.5rem;">
+                    <label>Ring Wire Cross-Section</label>
+                    <div class="grid-4" style="margin-top: 1rem;">
+                        <button class="shape-btn active" onclick="setRingShape('Round')">
+                            <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /></svg>
+                            <span>Round</span>
+                        </button>
+                        <button class="shape-btn" onclick="setRingShape('Semi-Round')">
+                            <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M 2 15 A 10 10 0 0 1 22 15 Z" /></svg>
+                            <span>Semi</span>
+                        </button>
+                        <button class="shape-btn" onclick="setRingShape('Rectangular')">
+                            <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="8" width="18" height="8" /></svg>
+                            <span>Rect</span>
+                        </button>
+                        <button class="shape-btn" onclick="setRingShape('Square')">
+                            <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" /></svg>
+                            <span>Square</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 0.25rem;">
+                    <div class="form-group">
+                        <label id="ringDim1Label">Diameter (mm)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="ringDim1" value="2">
+                            <span>mm</span>
+                        </div>
+                    </div>
+                    <div id="ringDim2Div" class="form-group" style="display: none;">
+                        <label>Height (mm)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="ringDim2" value="">
+                            <span>mm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Wire Section -->
+            <div class="card">
+                <div class="card-header card-header-relative">
+                    <h2>Stock Wire</h2>
+                    <button class="stock-toggle-btn" id="stockToggleBtn" onclick="toggleStockType()">Existing Wire</button>
+                </div>
+
+                <div id="newStockDiv">
+                    <div style="margin-bottom: 0.75rem;">
+                        <label>Stock Wire Cross-Section</label>
+                        <div class="grid-4" style="margin-top: 1rem;">
+                            <button class="shape-btn active" onclick="setStockType('Round')">
+                                <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /></svg>
+                                <span>Round</span>
+                            </button>
+                            <button class="shape-btn" onclick="setStockType('Semi-Round')">
+                                <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M 2 15 A 10 10 0 0 1 22 15 Z" /></svg>
+                                <span>Semi</span>
+                            </button>
+                            <button class="shape-btn" onclick="setStockType('Rectangular')">
+                                <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="8" width="18" height="8" /></svg>
+                                <span>Rect</span>
+                            </button>
+                            <button class="shape-btn" onclick="setStockType('Square')">
+                                <svg class="shape-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" /></svg>
+                                <span>Square</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label id="stockDim1Label">Diameter (mm)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="stockDim1" value="3">
+                                <span>mm</span>
+                            </div>
+                        </div>
+                        <div id="stockDim2Div" class="form-group" style="display: none;">
+                            <label>Height (mm)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="stockDim2" value="">
+                                <span>mm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="existingWireDiv" style="display: none;">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Weight ⚖️</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="existingWeight" value="">
+                                <span>g</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Length 📏</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="existingLength" value="">
+                                <span>mm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
+            <button class="calculate-btn" onclick="handleCalculate()">Calculate</button>
+
+            <!-- Results Section -->
+            <div class="results-container">
+                <div id="resultsArea" class="placeholder">Results will appear here</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Tests -->
+    <div class="modal-overlay" id="testModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeTestModal()">✕</button>
+            <div class="modal-header">
+                <h3>Test Results</h3>
+            </div>
+            <div class="modal-content" id="testResults"></div>
+        </div>
+    </div>
+
+    <footer>
+        RING'Y, a wire converter for jewelers, by ODENI Jewelry studio
+    </footer>
+
+    <script>
+        // ==================== CALCULATOR LOGIC ====================
+        const MATERIALS = {
+            '14K Gold': 13.1,
+            '18K Gold': 15.6,
+            '24K Gold': 19.32,
+            'Sterling Silver': 10.36,
+            'Brass': 8.5,
+        };
+
+        const US_RING_SIZES = {
+            '3': 14.1, '3.25': 14.3, '3.5': 14.5, '3.75': 14.7,
+            '4': 14.9, '4.25': 15.1, '4.5': 15.3, '4.75': 15.5,
+            '5': 15.7, '5.25': 15.9, '5.5': 16.1, '5.75': 16.3,
+            '6': 16.5, '6.25': 16.7, '6.5': 16.9, '6.75': 17.1,
+            '7': 17.3, '7.25': 17.5, '7.5': 17.7, '7.75': 17.9,
+            '8': 18.1, '8.25': 18.3, '8.5': 18.5, '8.75': 18.7,
+            '9': 18.9, '9.25': 19.1, '9.5': 19.4, '9.75': 19.6,
+            '10': 19.8, '10.25': 20.0, '10.5': 20.2, '10.75': 20.4,
+            '11': 20.6, '11.25': 20.8, '11.5': 21.0, '11.75': 21.2,
+            '12': 21.4, '12.25': 21.6, '12.5': 21.8, '12.75': 22.0,
+            '13': 22.2,
+        };
+
+        function calculateWireConversion(inputs) {
+            const {
+                material, ringInputMethod, usRingSize, freeLength, ringShape, ringDim1, ringDim2,
+                stockType, stockDim1, stockDim2, existingMaterial, existingWeight, existingLength
+            } = inputs;
+
+            const parseNum = (val) => {
+                if (typeof val === 'number') return val;
+                const n = parseFloat(val);
+                return isNaN(n) || n <= 0 ? null : n;
+            };
+
+            const calculateArea = (shape, dim1, dim2) => {
+                if (shape === 'Round') return Math.PI * Math.pow(dim1 / 2, 2);
+                if (shape === 'Rectangular') return dim1 * dim2;
+                if (shape === 'Square') return Math.pow(dim1, 2);
+                if (shape === 'Semi-Round') return (Math.PI * dim1 * dim2) / 4;
+                return null;
+            };
+
+            const getSectionHeight = (shape, dim1, dim2) => {
+                if (shape === 'Round') return dim1;
+                if (shape === 'Square') return dim1;
+                if (shape === 'Rectangular') return dim2;
+                if (shape === 'Semi-Round') return dim2;
+                return null;
+            };
+
+            const density = MATERIALS[material];
+            const rD1 = parseNum(ringDim1);
+            const rD2 = parseNum(ringDim2);
+            const rArea = calculateArea(ringShape, rD1, rD2);
+            const sectionHeight = getSectionHeight(ringShape, rD1, rD2);
+
+            let ringWireLength = 0;
+            let insideDiameter = 0;
+
+            if (ringInputMethod === 'US Ring Size') {
+                insideDiameter = US_RING_SIZES[usRingSize];
+                ringWireLength = Math.PI * (insideDiameter + sectionHeight);
+            } else {
+                ringWireLength = parseNum(freeLength);
+                insideDiameter = (ringWireLength / Math.PI) - sectionHeight;
+            }
+
+            const ringVolume = rArea * ringWireLength;
+            const metalWeight = (ringVolume / 1000) * density;
+
+            let stockLengthRequired = null;
+            let cutLengthFromExisting = null;
+
+            if (stockType === 'Existing Wire') {
+                const eWeight = parseNum(existingWeight);
+                const eLength = parseNum(existingLength);
+                const eDensity = MATERIALS[existingMaterial];
+
+                const existingVolume = (eWeight / eDensity) * 1000;
+                const cutFraction = ringVolume / existingVolume;
+                cutLengthFromExisting = eLength * cutFraction;
+            } else {
+                const sD1 = parseNum(stockDim1);
+                const sD2 = parseNum(stockDim2);
+                const sArea = calculateArea(stockType, sD1, sD2);
+                stockLengthRequired = ringVolume / sArea;
+            }
+
+            return {
+                ringWireLength: parseFloat(ringWireLength.toFixed(2)),
+                insideDiameter: parseFloat(insideDiameter.toFixed(2)),
+                metalWeight: parseFloat(metalWeight.toFixed(2)),
+                stockLengthRequired,
+                cutLengthFromExisting,
+                ringVolume
+            };
+        }
+
+        // ==================== TEST RUNNER ====================
+        const TEST_CASES = [
+            { id: 'T01', inputs: { material: 'Sterling Silver', ringInputMethod: 'US Ring Size', usRingSize: '7', ringShape: 'Round', ringDim1: 2.0, stockType: 'Round', stockDim1: 3.0 }, expected: { ringWireLength: 60.63, insideDiameter: 17.30, metalWeight: 1.97, stockLengthRequired: 26.95 } },
+            { id: 'T02', inputs: { material: '14K Gold', ringInputMethod: 'US Ring Size', usRingSize: '6', ringShape: 'Rectangular', ringDim1: 2.0, ringDim2: 1.5, stockType: 'Round', stockDim1: 2.5 }, expected: { ringWireLength: 56.55, insideDiameter: 16.50, metalWeight: 2.22, stockLengthRequired: 34.56 } },
+            { id: 'T03', inputs: { material: 'Brass', ringInputMethod: 'US Ring Size', usRingSize: '8.5', ringShape: 'Square', ringDim1: 2.2, stockType: 'Rectangular', stockDim1: 3.0, stockDim2: 1.8 }, expected: { ringWireLength: 65.03, insideDiameter: 18.50, metalWeight: 2.68, stockLengthRequired: 58.29 } },
+            { id: 'T04', inputs: { material: '18K Gold', ringInputMethod: 'US Ring Size', usRingSize: '9', ringShape: 'Semi-Round', ringDim1: 4.0, ringDim2: 1.5, stockType: 'Square', stockDim1: 2.8 }, expected: { ringWireLength: 64.09, insideDiameter: 18.90, metalWeight: 4.71, stockLengthRequired: 38.52 } },
+            { id: 'T05', inputs: { material: '24K Gold', ringInputMethod: 'US Ring Size', usRingSize: '10.5', ringShape: 'Round', ringDim1: 1.8, stockType: 'Semi-Round', stockDim1: 3.5, stockDim2: 1.4 }, expected: { ringWireLength: 69.12, insideDiameter: 20.20, metalWeight: 3.40, stockLengthRequired: 45.70 } },
+            { id: 'T06', inputs: { material: 'Sterling Silver', ringInputMethod: 'US Ring Size', usRingSize: '5.5', ringShape: 'Rectangular', ringDim1: 3.2, ringDim2: 1.2, stockType: 'Square', stockDim1: 2.4 }, expected: { ringWireLength: 54.35, insideDiameter: 16.10, metalWeight: 2.16, stockLengthRequired: 36.23 } },
+            { id: 'T07', inputs: { material: 'Brass', ringInputMethod: 'US Ring Size', usRingSize: '11', ringShape: 'Semi-Round', ringDim1: 3.0, ringDim2: 1.2, stockType: 'Round', stockDim1: 2.2 }, expected: { ringWireLength: 68.49, insideDiameter: 20.60, metalWeight: 1.65, stockLengthRequired: 50.94 } },
+            { id: 'T08', inputs: { material: '14K Gold', ringInputMethod: 'US Ring Size', usRingSize: '7.5', ringShape: 'Square', ringDim1: 1.8, stockType: 'Semi-Round', stockDim1: 2.8, stockDim2: 1.1 }, expected: { ringWireLength: 61.26, insideDiameter: 17.70, metalWeight: 2.60, stockLengthRequired: 82.05 } },
+            { id: 'T09', inputs: { material: '18K Gold', ringInputMethod: 'US Ring Size', usRingSize: '12', ringShape: 'Round', ringDim1: 2.4, stockType: 'Rectangular', stockDim1: 3.5, stockDim2: 1.6 }, expected: { ringWireLength: 74.77, insideDiameter: 21.40, metalWeight: 5.28, stockLengthRequired: 60.40 } },
+            { id: 'T10', inputs: { material: '24K Gold', ringInputMethod: 'US Ring Size', usRingSize: '6.5', ringShape: 'Rectangular', ringDim1: 2.5, ringDim2: 1.8, stockType: 'Round', stockDim1: 2.8 }, expected: { ringWireLength: 58.75, insideDiameter: 16.90, metalWeight: 5.11, stockLengthRequired: 42.93 } },
+            { id: 'T11', inputs: { material: 'Sterling Silver', ringInputMethod: 'US Ring Size', usRingSize: '9.5', ringShape: 'Semi-Round', ringDim1: 5.0, ringDim2: 1.8, stockType: 'Rectangular', stockDim1: 4.0, stockDim2: 2.0 }, expected: { ringWireLength: 66.60, insideDiameter: 19.40, metalWeight: 4.88, stockLengthRequired: 58.85 } },
+            { id: 'T12', inputs: { material: 'Brass', ringInputMethod: 'US Ring Size', usRingSize: '4.5', ringShape: 'Square', ringDim1: 2.5, stockType: 'Square', stockDim1: 3.2 }, expected: { ringWireLength: 55.92, insideDiameter: 15.30, metalWeight: 2.97, stockLengthRequired: 34.13 } },
+            { id: 'T13', inputs: { material: 'Sterling Silver', ringInputMethod: 'Free Length', freeLength: 62.0, ringShape: 'Round', ringDim1: 2.1, stockType: 'Round', stockDim1: 3.0 }, expected: { ringWireLength: 62.00, insideDiameter: 17.64, metalWeight: 2.22, stockLengthRequired: 30.38 } },
+            { id: 'T14', inputs: { material: '18K Gold', ringInputMethod: 'Free Length', freeLength: 58.5, ringShape: 'Rectangular', ringDim1: 2.8, ringDim2: 1.4, stockType: 'Semi-Round', stockDim1: 3.2, stockDim2: 1.3 }, expected: { ringWireLength: 58.50, insideDiameter: 17.22, metalWeight: 3.58, stockLengthRequired: 70.19 } },
+            { id: 'T15', inputs: { material: 'Sterling Silver', ringInputMethod: 'US Ring Size', usRingSize: '8', ringShape: 'Round', ringDim1: 2.0, stockType: 'Existing Wire', existingMaterial: 'Sterling Silver', existingWeight: 4.2, existingLength: 28.0 }, expected: { ringWireLength: 63.15, insideDiameter: 18.10, metalWeight: 2.06, cutLengthFromExisting: 13.70 } },
+            { id: 'T16', inputs: { material: '14K Gold', ringInputMethod: 'US Ring Size', usRingSize: '10', ringShape: 'Rectangular', ringDim1: 2.0, ringDim2: 1.5, stockType: 'Existing Wire', existingMaterial: '14K Gold', existingWeight: 6.8, existingLength: 35.0 }, expected: { ringWireLength: 66.92, insideDiameter: 19.80, metalWeight: 2.63, cutLengthFromExisting: 13.54 } },
+            { id: 'T17', inputs: { material: 'Brass', ringInputMethod: 'US Ring Size', usRingSize: '7', ringShape: 'Semi-Round', ringDim1: 3.2, ringDim2: 1.4, stockType: 'Existing Wire', existingMaterial: 'Brass', existingWeight: 3.1, existingLength: 40.0 }, expected: { ringWireLength: 58.75, insideDiameter: 17.30, metalWeight: 1.76, cutLengthFromExisting: 22.67 } },
+            { id: 'T18', inputs: { material: '18K Gold', ringInputMethod: 'Free Length', freeLength: 64.0, ringShape: 'Square', ringDim1: 2.2, stockType: 'Existing Wire', existingMaterial: '18K Gold', existingWeight: 8.5, existingLength: 30.0 }, expected: { ringWireLength: 64.00, insideDiameter: 18.17, metalWeight: 4.83, cutLengthFromExisting: 17.06 } },
+            { id: 'T19', inputs: { material: '24K Gold', ringInputMethod: 'US Ring Size', usRingSize: '11.5', ringShape: 'Round', ringDim1: 2.4, stockType: 'Existing Wire', existingMaterial: '24K Gold', existingWeight: 10.2, existingLength: 33.0 }, expected: { ringWireLength: 73.51, insideDiameter: 21.00, metalWeight: 6.43, cutLengthFromExisting: 20.79 } },
+            { id: 'T20', inputs: { material: 'Sterling Silver', ringInputMethod: 'Free Length', freeLength: 54.0, ringShape: 'Semi-Round', ringDim1: 2.8, ringDim2: 1.2, stockType: 'Existing Wire', existingMaterial: 'Sterling Silver', existingWeight: 5.0, existingLength: 45.0 }, expected: { ringWireLength: 54.00, insideDiameter: 15.99, metalWeight: 1.48, cutLengthFromExisting: 13.29 } }
+        ];
+
+        function runTests() {
+            const results = [];
+            let passedCount = 0;
+
+            for (const test of TEST_CASES) {
+                try {
+                    const res = calculateWireConversion(test.inputs);
+                    const errors = [];
+
+                    const check = (name, actual, expected) => {
+                        if (expected !== undefined) {
+                            if (actual === null || actual === undefined) {
+                                errors.push(`${name} is null/undefined, expected ${expected}`);
+                            } else if (Math.abs(actual - expected) > 0.02) {
+                                errors.push(`${name} expected ${expected}, got ${actual.toFixed(2)}`);
+                            }
+                        }
+                    };
+
+                    check('ringWireLength', res.ringWireLength, test.expected.ringWireLength);
+                    check('insideDiameter', res.insideDiameter, test.expected.insideDiameter);
+                    check('metalWeight', res.metalWeight, test.expected.metalWeight);
+                    check('stockLengthRequired', res.stockLengthRequired, test.expected.stockLengthRequired);
+                    check('cutLengthFromExisting', res.cutLengthFromExisting, test.expected.cutLengthFromExisting);
+
+                    if (errors.length === 0) {
+                        passedCount++;
+                        results.push({ id: test.id, passed: true });
+                    } else {
+                        results.push({ id: test.id, passed: false, errors });
+                    }
+                } catch (e) {
+                    results.push({ id: test.id, passed: false, errors: [e.message] });
+                }
+            }
+
+            return { results, passedCount, total: TEST_CASES.length };
+        }
+
+        // ==================== UI STATE ====================
+        let currentState = {
+            material: '14K Gold',
+            ringInputMethod: 'US Ring Size',
+            usRingSize: '7',
+            freeLength: '',
+            ringShape: 'Round',
+            ringDim1: '2',
+            ringDim2: '',
+            stockType: 'Existing Wire',
+            stockDim1: '3',
+            stockDim2: '',
+            existingMaterial: '14K Gold',
+            existingWeight: '',
+            existingLength: ''
+        };
+
+        // ==================== UI HANDLERS ====================
+        function handleRingInputMethodChange(value) {
+            const usDiv = document.getElementById('usRingSizeDiv');
+            const freeDiv = document.getElementById('freeLengthDiv');
+            
+            if (value === 'US Ring Size') {
+                currentState.ringInputMethod = 'US Ring Size';
+                usDiv.style.display = 'block';
+                freeDiv.style.display = 'none';
+            } else {
+                currentState.ringInputMethod = 'Free Length';
+                usDiv.style.display = 'none';
+                freeDiv.style.display = 'block';
+            }
+        }
+
+        function setRingShape(shape) {
+            currentState.ringShape = shape;
+            // Find the Ring Wire section and update only those buttons
+            const ringSection = document.querySelector('div .card:nth-of-type(1)');
+            const ringShapeButtons = document.querySelectorAll('.card:nth-of-type(1) .shape-btn');
+            
+            ringShapeButtons.forEach(btn => {
+                if (btn.textContent.includes(shape === 'Semi-Round' ? 'Semi' : shape === 'Rectangular' ? 'Rect' : shape)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update labels
+            const labels = {
+                'Round': 'Diameter (mm)',
+                'Square': 'Side (mm)',
+                'Rectangular': 'Width (mm)',
+                'Semi-Round': 'Width (mm)'
+            };
+            document.getElementById('ringDim1Label').textContent = labels[shape];
+            
+            if (['Rectangular', 'Semi-Round'].includes(shape)) {
+                document.getElementById('ringDim2Div').style.display = 'flex';
+            } else {
+                document.getElementById('ringDim2Div').style.display = 'none';
+            }
+        }
+
+        function toggleStockType() {
+            const newDiv = document.getElementById('newStockDiv');
+            const existDiv = document.getElementById('existingWireDiv');
+            const toggleBtn = document.getElementById('stockToggleBtn');
+
+            if (currentState.stockType !== 'Existing Wire') {
+                currentState.stockType = 'Existing Wire';
+                currentState.existingMaterial = currentState.material;
+                newDiv.style.display = 'none';
+                existDiv.style.display = 'block';
+                toggleBtn.textContent = 'Existing Wire';
+            } else {
+                currentState.stockType = 'Round';
+                newDiv.style.display = 'block';
+                existDiv.style.display = 'none';
+                toggleBtn.textContent = 'Stock';
+            }
+        }
+
+        function setStockType(type) {
+            currentState.stockType = type;
+            document.querySelectorAll('#newStockDiv .shape-btn').forEach(btn => {
+                if (btn.textContent.includes(type === 'Semi-Round' ? 'Semi' : type === 'Rectangular' ? 'Rect' : type)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const labels = {
+                'Round': 'Diameter (mm)',
+                'Square': 'Side (mm)',
+                'Rectangular': 'Width (mm)',
+                'Semi-Round': 'Width (mm)'
+            };
+            document.getElementById('stockDim1Label').textContent = labels[type];
+
+            if (['Rectangular', 'Semi-Round'].includes(type)) {
+                document.getElementById('stockDim2Div').style.display = 'flex';
+            } else {
+                document.getElementById('stockDim2Div').style.display = 'none';
+            }
+        }
+
+        function handleCalculate() {
+            // Update state from DOM
+            currentState.material = document.getElementById('material').value;
+            currentState.usRingSize = document.getElementById('usRingSize').value;
+            currentState.freeLength = document.getElementById('freeLength').value;
+            currentState.ringDim1 = document.getElementById('ringDim1').value;
+            currentState.ringDim2 = document.getElementById('ringDim2').value;
+            currentState.stockDim1 = document.getElementById('stockDim1').value;
+            currentState.stockDim2 = document.getElementById('stockDim2').value;
+            currentState.existingWeight = document.getElementById('existingWeight').value;
+            currentState.existingLength = document.getElementById('existingLength').value;
+            currentState.existingMaterial = currentState.material;
+
+            // Validation
+            const errors = [];
+
+            // Ring specs validation
+            if (!currentState.material) errors.push('Material is required');
+            if (!currentState.ringDim1 || parseFloat(currentState.ringDim1) <= 0) {
+                errors.push('Ring Dimension 1 must be a positive number');
+            }
+            if (['Rectangular', 'Semi-Round'].includes(currentState.ringShape)) {
+                if (!currentState.ringDim2 || parseFloat(currentState.ringDim2) <= 0) {
+                    errors.push('Ring Dimension 2 is required for ' + currentState.ringShape + ' shape');
+                }
+            }
+
+            // Ring size validation
+            if (currentState.ringInputMethod === 'US Ring Size') {
+                if (!currentState.usRingSize) {
+                    errors.push('US Ring Size is required');
+                }
+            } else {
+                if (!currentState.freeLength || parseFloat(currentState.freeLength) <= 0) {
+                    errors.push('Free Length must be a positive number');
+                }
+            }
+
+            // Stock validation
+            if (currentState.stockType === 'Existing Wire') {
+                if (!currentState.existingWeight || parseFloat(currentState.existingWeight) <= 0) {
+                    errors.push('Existing Wire Weight must be a positive number');
+                }
+                if (!currentState.existingLength || parseFloat(currentState.existingLength) <= 0) {
+                    errors.push('Existing Wire Length must be a positive number');
+                }
+            } else {
+                if (!currentState.stockDim1 || parseFloat(currentState.stockDim1) <= 0) {
+                    errors.push('Stock Dimension 1 must be a positive number');
+                }
+                if (['Rectangular', 'Semi-Round'].includes(currentState.stockType)) {
+                    if (!currentState.stockDim2 || parseFloat(currentState.stockDim2) <= 0) {
+                        errors.push('Stock Dimension 2 is required for ' + currentState.stockType + ' shape');
+                    }
+                }
+            }
+
+            if (errors.length > 0) {
+                displayError(errors.join(' • '));
+                return;
+            }
+
+            try {
+                const results = calculateWireConversion(currentState);
+                displayResults(results);
+            } catch (e) {
+                displayError('Invalid inputs. Please check your values.');
+                console.error(e);
+            }
+        }
+
+        function displayResults(results) {
+            const resultsArea = document.getElementById('resultsArea');
+            
+            if (!results || results.error) {
+                resultsArea.innerHTML = `<div class="results-error">${results?.error || 'Invalid inputs. Please check your values.'}</div>`;
+                resultsArea.className = 'results-error';
+                return;
+            }
+
+            let mainResult = '';
+            if (results.stockLengthRequired !== null) {
+                mainResult = `
+                    <div class="results-main">
+                        <div class="results-label">Required Stock</div>
+                        <div style="display: flex; align-items: baseline; justify-content: center;">
+                            <div class="results-value">${results.stockLengthRequired?.toFixed(1)}</div>
+                            <div class="results-unit" style="margin-left: 0.5rem;">mm</div>
+                        </div>
+                    </div>
+                `;
+            } else if (results.cutLengthFromExisting !== null) {
+                mainResult = `
+                    <div class="results-main">
+                        <div class="results-label">Cut Existing</div>
+                        <div style="display: flex; align-items: baseline; justify-content: center;">
+                            <div class="results-value">${results.cutLengthFromExisting?.toFixed(1)}</div>
+                            <div class="results-unit" style="margin-left: 0.5rem;">mm</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultsArea.innerHTML = `
+                <div class="results">
+                    ${mainResult}
+                    <div class="results-secondary">
+                        <div class="result-item">
+                            <div class="result-label">Ring Length</div>
+                            <div class="result-value">${results.ringWireLength?.toFixed(1)} <span class="result-unit">mm</span></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Inside Dia.</div>
+                            <div class="result-value">${results.insideDiameter?.toFixed(1)} <span class="result-unit">mm</span></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Weight</div>
+                            <div class="result-value">${results.metalWeight?.toFixed(2)} <span class="result-unit">g</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultsArea.className = 'results-container';
+        }
+
+        function displayError(message) {
+            const resultsArea = document.getElementById('resultsArea');
+            resultsArea.innerHTML = `<div class="results-error">${message}</div>`;
+            resultsArea.className = 'results-error';
+        }
+
+        // ==================== TEST MODAL ====================
+        function openTestModal() {
+            const testResults = runTests();
+            const modal = document.getElementById('testModal');
+            const resultsDiv = document.getElementById('testResults');
+
+            let html = `<div class="test-summary">Passed: ${testResults.passedCount} / ${testResults.total}</div>`;
+
+            testResults.results.forEach(result => {
+                const statusClass = result.passed ? 'passed' : 'failed';
+                const colorIcon = result.passed ? '🟢' : '🔴';
+                const testId = `test-${result.id}`;
+                
+                // Get the test case to display inputs/outputs
+                const testCase = TEST_CASES.find(t => t.id === result.id);
+                
+                let detailsContent = '';
+                if (result.passed && testCase) {
+                    // For passed tests, show what was checked
+                    detailsContent = `
+                        <div style="font-size: 0.6rem; margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.3rem;"><strong>Inputs:</strong></div>
+                            <div style="margin-left: 0.5rem; color: #666; margin-bottom: 0.5rem;">
+                                Material: ${testCase.inputs.material}<br>
+                                Ring Shape: ${testCase.inputs.ringShape}<br>
+                                Ring Dim1: ${testCase.inputs.ringDim1}mm${testCase.inputs.ringDim2 ? '<br>Ring Dim2: ' + testCase.inputs.ringDim2 + 'mm' : ''}<br>
+                                Stock Type: ${testCase.inputs.stockType}<br>
+                                Stock Dim1: ${testCase.inputs.stockDim1}mm${testCase.inputs.stockDim2 ? '<br>Stock Dim2: ' + testCase.inputs.stockDim2 + 'mm' : ''}
+                            </div>
+                            <div style="margin-bottom: 0.3rem;"><strong>Expected Results:</strong></div>
+                            <div style="margin-left: 0.5rem; color: #10b981;">
+                                Ring Length: ${testCase.expected.ringWireLength}mm<br>
+                                Inside Dia: ${testCase.expected.insideDiameter}mm<br>
+                                Weight: ${testCase.expected.metalWeight}g<br>
+                                ${testCase.expected.stockLengthRequired ? 'Stock Required: ' + testCase.expected.stockLengthRequired + 'mm' : 'Cut Length: ' + testCase.expected.cutLengthFromExisting + 'mm'}
+                            </div>
+                        </div>
+                    `;
+                } else if (!result.passed && result.errors) {
+                    detailsContent = `
+                        <ul style="margin: 0;">
+                            ${result.errors.map(err => `<li>${err}</li>`).join('')}
+                        </ul>
+                    `;
+                } else {
+                    detailsContent = `<ul style="margin: 0;"><li>All checks passed ✓</li></ul>`;
+                }
+                
+                html += `
+                    <div class="test-item ${statusClass}">
+                        <div class="test-header" onclick="toggleTestDetails('${testId}')">
+                            <span class="test-icon">${colorIcon}</span>
+                            <span class="test-toggle">Test ${result.id}</span>
+                        </div>
+                        <div class="test-errors" id="${testId}">
+                            ${detailsContent}
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function toggleTestDetails(testId) {
+            const errorDiv = document.getElementById(testId);
+            const toggleSpan = errorDiv.previousElementSibling.querySelector('.test-toggle');
+            errorDiv.classList.toggle('expanded');
+            toggleSpan.classList.toggle('expanded');
+        }
+
+        function closeTestModal() {
+            document.getElementById('testModal').classList.remove('active');
+        }
+
+        // ==================== DARK MODE ====================
+        document.getElementById('darkToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+
+        document.getElementById('testBtn').addEventListener('click', openTestModal);
+
+        // Initialize dark mode from localStorage
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.add('dark-mode'); // Default to dark mode
+        }
+
+        // Initialize stock type to Existing Wire on page load
+        document.getElementById('newStockDiv').style.display = 'none';
+        document.getElementById('existingWireDiv').style.display = 'block';
+
+        // Event listeners for input changes
+        document.getElementById('material').addEventListener('change', (e) => {
+            currentState.material = e.target.value;
+            currentState.existingMaterial = e.target.value;
+        });
+
+        document.getElementById('ringInputMethod').addEventListener('change', (e) => {
+            handleRingInputMethodChange(e.target.value);
+        });
+
+        document.getElementById('usRingSize').addEventListener('change', (e) => {
+            currentState.usRingSize = e.target.value;
+        });
+
+        document.getElementById('freeLength').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.freeLength = '';
+            } else {
+                currentState.freeLength = e.target.value;
+            }
+        });
+
+        document.getElementById('ringDim1').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.ringDim1 = '';
+            } else {
+                currentState.ringDim1 = e.target.value;
+            }
+        });
+
+        document.getElementById('ringDim2').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.ringDim2 = '';
+            } else {
+                currentState.ringDim2 = e.target.value;
+            }
+        });
+
+        document.getElementById('stockDim1').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.stockDim1 = '';
+            } else {
+                currentState.stockDim1 = e.target.value;
+            }
+        });
+
+        document.getElementById('stockDim2').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.stockDim2 = '';
+            } else {
+                currentState.stockDim2 = e.target.value;
+            }
+        });
+
+        document.getElementById('existingWeight').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.existingWeight = '';
+            } else {
+                currentState.existingWeight = e.target.value;
+            }
+        });
+
+        document.getElementById('existingLength').addEventListener('change', (e) => {
+            let value = parseFloat(e.target.value);
+            if (value < 0) {
+                e.target.value = '';
+                currentState.existingLength = '';
+            } else {
+                currentState.existingLength = e.target.value;
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('testModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('testModal')) {
+                closeTestModal();
+            }
+        });
+    </script>
+</body>
+</html>
